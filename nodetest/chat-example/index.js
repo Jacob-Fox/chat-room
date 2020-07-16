@@ -3,7 +3,7 @@ var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 
-const { grandExchange }  = require('osrs-api');
+const {  grandExchange } = require('osrs-api');
 
 //get osrs item/id database giblet
 fetch("https://www.osrsbox.com/osrsbox-db/items-summary.json").then(async function(response) {
@@ -19,10 +19,12 @@ app.get('/', (req, res) => {
 io.on('connect', (socket) => {
   io.to(socket.id).emit('user connected');
   socket.on('user connected response',function(name){
-    io.emit('user connected message', name + " has connected");
+    io.emit('user connected message', {msg: name + " has connected", chatcount: getChatters()});
+    var srvSockets=io.sockets.sockets;
+    console.log(Object.keys(srvSockets).length);
   });
   socket.on('disconnect', () => {
-    io.emit('user disconnected');
+    io.emit('user disconnected',getChatters());
   });
   socket.on('chat message', function(data) { //handle messages
     io.emit('chat message', data["name"] +": "+ data["msg"]);
@@ -60,6 +62,12 @@ async function getOSItem(item){
     }
 }
 
-http.listen(3000, () => {
-  console.log('listening on *:3000');
+function getChatters(){
+  var srvSockets=io.sockets.sockets;
+  return Object.keys(srvSockets).length;
+}
+
+
+http.listen(8080, () => {
+  console.log('listening on *:8080');
 });
