@@ -109,8 +109,9 @@
 	    $('#messages').append($('<li>').text(msg).css("color", "red"));
 	    autoScroll();
 	 });
-	 socket.on('price check', function(msg){
-	    $('#messages').append($('<li>').text(msg).css("color", "green"));	
+	 socket.on('price check', function(data){
+	    var img = $('<img />', {src : data["img"]});
+	    $('#messages').append($('<li>').text(data["price"]).css("color", "green").prepend(img));	
 	    autoScroll();
 	 });
 	 

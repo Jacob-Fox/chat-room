@@ -21,7 +21,6 @@ io.on('connect', (socket) => {
   socket.on('user connected response',function(name){
     io.emit('user connected message', {msg: name + " has connected", chatcount: getChatters()});
     var srvSockets=io.sockets.sockets;
-    console.log(Object.keys(srvSockets).length);
   });
   socket.on('disconnect', () => {
     io.emit('user disconnected',getChatters());
@@ -30,24 +29,17 @@ io.on('connect', (socket) => {
     io.emit('chat message', data["name"] +": "+ data["msg"]);
   });
   socket.on('price check', function(itemname) { //needs to be data still to pass username
-      getOSItem(itemname).then(price => {io.emit('price check', price)}).catch((e) => {
+      getOSItemPrice(itemname).then(price => {io.emit('price check', {price: price, img: 'https://www.osrsbox.com/osrsbox-db/items-icons/'+getOSItemID(itemname)+'.png'})}).catch((e) => {
         console.error(e.message);
         io.emit('error message', "ERROR: Item \'" + itemname + "\' does not exist. ("+ e.message + ")" );
       });
   });
 });
 
-//get an OSRS items price using its ID
-async function getOSItem(item){
-  item = item.toLowerCase();
-  item = item.substring(0,1).toUpperCase() + item.substring(1);
-  var x;
-  for(x in osrsDB){
-    if(osrsDB[x]["name"] == item){
-	var itemID = osrsDB[x]["id"];
-	break;
-    }
-  }
+//get an OSRS items price using its name
+async function getOSItemPrice(item){
+
+  var itemID = getOSItemID(item);
 
   let ositem = await grandExchange.getItem(itemID).catch((e) => {
     console.error(e.message);
@@ -63,6 +55,23 @@ async function getOSItem(item){
         return(nameAndPriceString);
     }
 }
+
+//get an osrs item's database id number 
+function getOSItemID(item){
+  item = item.toLowerCase();
+  item = item.substring(0,1).toUpperCase() + item.substring(1);
+  var x;
+  
+  for(x in osrsDB){
+    if(osrsDB[x]["name"] == item){
+	var itemID = osrsDB[x]["id"];
+	break;
+    }
+  }
+  
+  return itemID; 
+}
+
 
 function getChatters(){
   var srvSockets=io.sockets.sockets;
