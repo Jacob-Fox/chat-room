@@ -45,8 +45,12 @@ async function getOSItem(item){
   for(x in osrsDB){
     if(osrsDB[x]["name"] == item){
 	var itemID = osrsDB[x]["id"];
+	break;
     }
   }
+//  console.log(itemID);
+//  grandExchange.getItem(itemID).then(console.log).catch(console.error);
+
   let ositem = await grandExchange.getItem(itemID).catch((e) => {
     console.error(e.message);
   });
