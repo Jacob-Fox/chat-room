@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
-     function setCookie(cname, cvalue, exdays) {
+       function setCookie(cname, cvalue, exdays) {
          var d = new Date();
          d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
          var expires = "expires="+d.toUTCString();
@@ -37,7 +37,7 @@
          }      
        }
     </script>
-    <title>Network Chat</title>
+    <title>Chat Room</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial;}
@@ -72,8 +72,16 @@
 	      $('#m').val('');
 	      return false;
 	    }else if(message.substring(0, 11) === "!changename"){
+	      if(message === "!changename"){
+	        e.preventDefault();
+	        var newName = prompt("Please enter your new name (max 20)");
+	        setCookie("username", newName.substring(0,20) , 365);
+	        alert("name change successful " + getCookie("username"));
+	        $('#m').val('');
+	        return false; 
+	      }  
 	      e.preventDefault();
-	      setCookie("username",message.substring(message.indexOf(" ")+1), 365);	
+	      setCookie("username",message.substring(message.indexOf(" ")+1,31), 365);	
 	      alert("name change successful " + getCookie("username"));
 	      $('#m').val('');
 	      return false;

@@ -79,6 +79,6 @@ function getChatters(){
 }
 
 
-http.listen(8080, () => {
-  console.log('listening on *:8080');
+http.listen(3000, () => {
+  console.log('listening on *:3000');
 });
